@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     software-properties-common \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home
 
@@ -19,8 +19,9 @@ RUN pip3 install -r /home/requirements.txt
 
 EXPOSE 8501
 
+ADD data /home/data
+
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
-COPY entrypoint.sh /home/entrypoint.sh
-RUN chmod +x /home/entrypoint.sh
-ENTRYPOINT ["/home/entrypoint.sh"]
+
+ENTRYPOINT ["streamlit run /home/meme_search/app.py --server.port=8501 --server.address=0.0.0.0"]
